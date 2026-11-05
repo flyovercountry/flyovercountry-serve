@@ -1,0 +1,246 @@
+{
+ "generated": "2026-04-16",
+ "crop": {
+  "start": "2026-02-26",
+  "end": "2026-04-16"
+ },
+ "roles": [
+  {
+   "id": 0,
+   "slug": "air_refuelling",
+   "label": "air refuelling",
+   "airframes": 236,
+   "flights": 1208
+  },
+  {
+   "id": 1,
+   "slug": "awacs",
+   "label": "awacs",
+   "airframes": 2,
+   "flights": 2
+  },
+  {
+   "id": 2,
+   "slug": "bomber",
+   "label": "bomber",
+   "airframes": 7,
+   "flights": 10
+  },
+  {
+   "id": 3,
+   "slug": "civil_cargo",
+   "label": "civil cargo",
+   "airframes": 9,
+   "flights": 23
+  },
+  {
+   "id": 4,
+   "slug": "close_air_support",
+   "label": "close air support",
+   "airframes": 1,
+   "flights": 2
+  },
+  {
+   "id": 5,
+   "slug": "command_relay",
+   "label": "command relay",
+   "airframes": 5,
+   "flights": 8
+  },
+  {
+   "id": 6,
+   "slug": "csar",
+   "label": "csar",
+   "airframes": 7,
+   "flights": 29
+  },
+  {
+   "id": 7,
+   "slug": "fighter_air_superiority",
+   "label": "fighter air superiority",
+   "airframes": 11,
+   "flights": 22
+  },
+  {
+   "id": 8,
+   "slug": "gunship",
+   "label": "gunship",
+   "airframes": 2,
+   "flights": 13
+  },
+  {
+   "id": 9,
+   "slug": "maritime_patrol",
+   "label": "maritime patrol",
+   "airframes": 19,
+   "flights": 75
+  },
+  {
+   "id": 10,
+   "slug": "multirole_fighter",
+   "label": "multirole fighter",
+   "airframes": 2,
+   "flights": 4
+  },
+  {
+   "id": 11,
+   "slug": "sigint_elint",
+   "label": "sigint elint",
+   "airframes": 10,
+   "flights": 28
+  },
+  {
+   "id": 12,
+   "slug": "special_ops_lift",
+   "label": "special ops lift",
+   "airframes": 9,
+   "flights": 57
+  },
+  {
+   "id": 13,
+   "slug": "strategic_airlift",
+   "label": "strategic airlift",
+   "airframes": 183,
+   "flights": 3577
+  },
+  {
+   "id": 14,
+   "slug": "strategic_recon",
+   "label": "strategic recon",
+   "airframes": 1,
+   "flights": 1
+  },
+  {
+   "id": 15,
+   "slug": "tactical_airlift",
+   "label": "tactical airlift",
+   "airframes": 74,
+   "flights": 1051
+  },
+  {
+   "id": 16,
+   "slug": "trainer_primary",
+   "label": "trainer primary",
+   "airframes": 1,
+   "flights": 7
+  },
+  {
+   "id": 17,
+   "slug": "typecode_unknown",
+   "label": "typecode unknown",
+   "airframes": 31,
+   "flights": 101
+  },
+  {
+   "id": 18,
+   "slug": "uav_isr",
+   "label": "uav isr",
+   "airframes": 2,
+   "flights": 37
+  },
+  {
+   "id": 19,
+   "slug": "utility_light",
+   "label": "utility light",
+   "airframes": 32,
+   "flights": 859
+  },
+  {
+   "id": 20,
+   "slug": "vip_executive",
+   "label": "vip executive",
+   "airframes": 30,
+   "flights": 379
+  }
+ ],
+ "groups": [
+  {
+   "id": 1,
+   "slug": "airlift",
+   "label": "Airlift",
+   "on": true,
+   "roles": [
+    13,
+    15,
+    12,
+    6
+   ]
+  },
+  {
+   "id": 2,
+   "slug": "refuelling",
+   "label": "Refuelling",
+   "on": true,
+   "roles": [
+    0
+   ]
+  },
+  {
+   "id": 3,
+   "slug": "combat",
+   "label": "Combat",
+   "on": true,
+   "roles": [
+    7,
+    10,
+    4,
+    2,
+    8
+   ]
+  },
+  {
+   "id": 4,
+   "slug": "isr",
+   "label": "ISR",
+   "on": true,
+   "roles": [
+    9,
+    1,
+    11,
+    5,
+    14,
+    18
+   ]
+  },
+  {
+   "id": 5,
+   "slug": "other_roles",
+   "label": "Other roles",
+   "on": false,
+   "roles": [
+    16,
+    20,
+    19,
+    3
+   ]
+  },
+  {
+   "id": 6,
+   "slug": "role_unknown",
+   "label": "Role unknown",
+   "on": true,
+   "roles": [
+    17
+   ]
+  }
+ ],
+ "excluded": {
+  "rotary_airframes": 3472,
+  "non_aircraft_airframes": 3
+ },
+ "unknown_buckets": {
+  "typecode_unknown": {
+   "airframes": 31,
+   "flights": 101
+  },
+  "type_unknown": {
+   "airframes": 0,
+   "flights": 0
+  },
+  "role_unknown": {
+   "airframes": 0,
+   "flights": 0
+  }
+ },
+ "_note": "role/group ids are stable only within this build; regenerated per export, not across builds"
+}

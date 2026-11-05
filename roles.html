@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aircraft roles &mdash; Flyover Country</title>
+<link rel="icon" type="image/png" href="logo.png">
+<link rel="stylesheet" href="roles.css">
+</head>
+<body>
+<main class="roles-page">
+<h1>How an aircraft becomes a role group</h1>
+<p class='lead'>The role filter groups aircraft by what they are for. This page shows exactly how that mapping is made, for every one of the 185 type codes and 26 roles in the taxonomy. It is generated from the same configuration file the data pipeline reads, so it cannot describe anything the pipeline does not do.</p>
+<div class="disclaimer" role="note">
+<h2>Please correct this</h2>
+<p><strong>This taxonomy was assembled with AI assistance, and the authors are very uncertain about it.</strong> Role assignments for military aircraft are a matter of doctrine, variant and operator, and a single type code frequently covers airframes doing quite different jobs. We expect errors here.</p>
+<p>Corrections from subject-matter experts are actively wanted &mdash; ideally with a reference to public documentation we can cite, so the correction can be verified rather than simply believed. <a href="https://cryptpad.fr/form/#/2/form/view/9rqPIEkeCMj6YcADThr2VIzaRop7Neg7+Zco+6yftKM/embed/" target="_blank" rel="noopener">Send a correction</a>.</p>
+</div>
+<h2 id="how">How the assignment works</h2>
+<ol class='how-list'>
+<li>The aircraft&rsquo;s broadcast type code is stripped to letters and digits and upper-cased.</li>
+<li>That code is looked up in the designator table. <strong>There is no fallback and no guessing</strong>: a code that is not in the table yields no roles at all, rather than a default.</li>
+<li>If the designator has variant rules and the aircraft&rsquo;s description matches one, the roles are narrowed to that rule&rsquo;s list (see <a href='#variants'>Variant narrowing</a>).</li>
+<li>An aircraft matches a filter when its roles intersect the selected ones. Aircraft with several roles therefore appear under several groups &mdash; the roles are what the airframe <em>could</em> be doing, not a claim about a particular flight.</li>
+</ol>
+<p class='caveat'><strong>What this is not.</strong> A role is a property of the aircraft type, not an observation of the mission. Nothing here asserts what any individual flight was carrying or doing.</p>
+<h2 id="excluded">Excluded from the data entirely</h2>
+<p>Aircraft whose type could fill any of the roles below are dropped from the pipeline before anything else happens, so they appear in no map, count or export. The exclusion is deliberately conservative: if <em>any</em> role the type could fill is in this set, the aircraft is excluded.</p><p>If you are looking for helicopters and finding none, this is why &mdash; not an absence in the data.</p>
+<table class="excluded-roles">
+<thead><tr><th>Role</th><th>Why excluded</th><th>Type codes</th></tr></thead><tbody>
+<tr><td>Non-aircraft <code>non_aircraft</code></td><td>Not an aircraft</td><td><code>BALL</code>, <code>FFLO</code>, <code>TWR</code></td></tr>
+<tr><td>Attack helicopter <code>rotary_attack</code></td><td>Rotary-wing</td><td><code>H500</code>, <code>H60</code>, <code>H64</code>, <code>SUCO</code></td></tr>
+<tr><td>Rotary lift <code>rotary_lift</code></td><td>Rotary-wing</td><td><code>A109</code>, <code>A119</code>, <code>A139</code>, <code>A189</code>, <code>AS32</code>, <code>AS35</code>, <code>AS50</code>, <code>AS55</code>, <code>AS65</code>, <code>B06</code>, <code>B06T</code>, <code>B212</code>, <code>B412</code>, <code>B429</code>, <code>B505</code>, <code>EC25</code>, <code>EC30</code>, <code>EC35</code>, <code>EC45</code>, <code>EC55</code>, <code>EC75</code>, <code>H47</code>, <code>H500</code>, <code>H53</code>, <code>H53S</code>, <code>H60</code>, <code>MI8</code>, <code>R22</code>, <code>R44</code>, <code>R66</code>, <code>S61</code>, <code>S76</code>, <code>S92</code>, <code>UH1</code>, <code>UH1Y</code></td></tr>
+<tr><td>Tilt-rotor lift <code>tilt_rotor</code></td><td>Rotary-wing</td><td><code>V22</code></td></tr>
+</tbody></table>
+<h2 id="unknown">When the role is unknown</h2>
+<p>Three synthetic buckets stand in when the lookup does not produce roles. They are not roles in the taxonomy; they exist so that an unresolved aircraft is visibly unresolved rather than silently dropped or lumped in with a real category.</p>
+<dl class='buckets'>
+<dt><code>typecode_unknown</code></dt><dd>The aircraft broadcast no type code at all, so there was nothing to look up.</dd>
+<dt><code>type_unknown</code></dt><dd>A type code was broadcast but could not be resolved to a known aircraft type.</dd>
+<dt><code>role_unknown</code></dt><dd>The type resolved fine, but its designator carries no roles in the taxonomy — so the aircraft is known and its job is not.</dd>
+</dl>
+<h2 id="groups">The groups</h2>
+<ul class="group-index">
+<li><a href="#group-airlift">Airlift</a> <span class="count">4 roles</span></li>
+<li><a href="#group-refuelling">Refuelling</a> <span class="count">1 role</span></li>
+<li><a href="#group-combat">Combat</a> <span class="count">5 roles</span></li>
+<li><a href="#group-isr">ISR</a> <span class="count">7 roles</span></li>
+<li><a href="#group-other_roles">Other roles</a> <span class="count">5 roles</span></li>
+<li><a href="#group-role_unknown">Role unknown</a> <span class="count">0 roles</span></li>
+</ul>
+<section class="role-group" id="group-airlift">
+<h3>Airlift <span class="group-flag">(on by default)</span></h3>
+<div class="role" id="role-strategic_airlift">
+<h4>Strategic airlift <code>strategic_airlift</code></h4>
+<p class="role-desc">Long-range high-capacity fixed-wing transport (C-17, C-5)</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>C17</code></td><td>C-17 Globemaster III</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C5</code></td><td>C-5 Galaxy</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C5M</code></td><td>C-5M Super Galaxy</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-tactical_airlift">
+<h4>Tactical airlift <code>tactical_airlift</code></h4>
+<p class="role-desc">Medium-range, austere-field-capable (C-130 family, C-27J)</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>C130</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130 (legacy H/E)</td><td class="other-roles">air_refuelling, special_ops_lift, gunship, csar, sigint_elint, maritime_patrol, vip_executive</td></tr>
+<tr><td><code>C160</code></td><td>Transall C-160</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C2</code></td><td>C-2A Greyhound</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C212</code></td><td>CASA C-212 Aviocar</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C27J</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>C-27J Spartan</td><td class="other-roles">csar, special_ops_lift, maritime_patrol</td></tr>
+<tr><td><code>C295</code></td><td>C-295</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C30J</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130J family</td><td class="other-roles">air_refuelling, special_ops_lift, gunship, csar, sigint_elint, maritime_patrol</td></tr>
+<tr><td><code>CN35</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>CASA CN-235 / HC-144</td><td class="other-roles">csar, maritime_patrol</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-special_ops_lift">
+<h4>Special-ops lift <code>special_ops_lift</code></h4>
+<p class="role-desc">MC-130 / SOF infiltration &amp; exfiltration platforms</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>C130</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130 (legacy H/E)</td><td class="other-roles">tactical_airlift, air_refuelling, gunship, csar, sigint_elint, maritime_patrol, vip_executive</td></tr>
+<tr><td><code>C27J</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>C-27J Spartan</td><td class="other-roles">tactical_airlift, csar, maritime_patrol</td></tr>
+<tr><td><code>C30J</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130J family</td><td class="other-roles">tactical_airlift, air_refuelling, gunship, csar, sigint_elint, maritime_patrol</td></tr>
+<tr><td><code>D328</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Dornier 328 / C-146A Wolfhound</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>H47</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>CH-47/MH-47 Chinook</td><td class="other-roles">rotary_lift</td></tr>
+<tr><td><code>H500</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>MD500 / AH-6 / MH-6 Little Bird</td><td class="other-roles">rotary_attack, rotary_lift</td></tr>
+<tr><td><code>H53</code></td><td>Sikorsky H-53 Sea Stallion family</td><td class="other-roles">rotary_lift, csar</td></tr>
+<tr><td><code>H53S</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>CH-53/MH-53 Sea Stallion</td><td class="other-roles">rotary_lift</td></tr>
+<tr><td><code>H60</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Sikorsky H-60 (UH/HH/MH/AH-60)</td><td class="other-roles">rotary_lift, rotary_attack, csar</td></tr>
+<tr><td><code>M28</code></td><td>PZL M28 / C-145A Skytruck</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>PC12</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Pilatus PC-12 / U-28A Draco</td><td class="other-roles">utility_light, sigint_elint</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-csar">
+<h4>Combat search &amp; rescue <code>csar</code></h4>
+<p class="role-desc">HC-130J, HH-60; V-22 flies USMC TRAP recovery</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>C130</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130 (legacy H/E)</td><td class="other-roles">tactical_airlift, air_refuelling, special_ops_lift, gunship, sigint_elint, maritime_patrol, vip_executive</td></tr>
+<tr><td><code>C27J</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>C-27J Spartan</td><td class="other-roles">tactical_airlift, special_ops_lift, maritime_patrol</td></tr>
+<tr><td><code>C30J</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130J family</td><td class="other-roles">tactical_airlift, air_refuelling, special_ops_lift, gunship, sigint_elint, maritime_patrol</td></tr>
+<tr><td><code>CN35</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>CASA CN-235 / HC-144</td><td class="other-roles">tactical_airlift, maritime_patrol</td></tr>
+<tr><td><code>FA20</code></td><td>Dassault Falcon 20 / HU-25 Guardian</td><td class="other-roles">vip_executive</td></tr>
+<tr><td><code>H53</code></td><td>Sikorsky H-53 Sea Stallion family</td><td class="other-roles">rotary_lift, special_ops_lift</td></tr>
+<tr><td><code>H60</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Sikorsky H-60 (UH/HH/MH/AH-60)</td><td class="other-roles">rotary_lift, rotary_attack, special_ops_lift</td></tr>
+<tr><td><code>UH1</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>UH-1 Iroquois</td><td class="other-roles">rotary_lift</td></tr>
+</tbody></table>
+</div>
+</section>
+<section class="role-group" id="group-refuelling">
+<h3>Refuelling <span class="group-flag">(on by default)</span></h3>
+<div class="role" id="role-air_refuelling">
+<h4>Air-to-air refuelling <code>air_refuelling</code></h4>
+<p class="role-desc">KC-135, KC-46, KC-10 / KC-30 MRTT</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>A330</code></td><td>Airbus A330</td><td class="other-roles">civil_cargo, vip_executive</td></tr>
+<tr><td><code>A332</code></td><td>Airbus A330-200</td><td class="other-roles">civil_cargo</td></tr>
+<tr><td><code>B762</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Boeing 767-200</td><td class="other-roles">civil_cargo</td></tr>
+<tr><td><code>C130</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130 (legacy H/E)</td><td class="other-roles">tactical_airlift, special_ops_lift, gunship, csar, sigint_elint, maritime_patrol, vip_executive</td></tr>
+<tr><td><code>C135</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>C-135 Stratolifter</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>C30J</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130J family</td><td class="other-roles">tactical_airlift, special_ops_lift, gunship, csar, sigint_elint, maritime_patrol</td></tr>
+<tr><td><code>K35E</code></td><td>KC-135E</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>K35R</code></td><td>KC-135R Stratotanker</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>KC46</code></td><td>KC-46 Pegasus</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+</section>
+<section class="role-group" id="group-combat">
+<h3>Combat <span class="group-flag">(on by default)</span></h3>
+<div class="role" id="role-fighter_air_superiority">
+<h4>Air-superiority fighter <code>fighter_air_superiority</code></h4>
+<p class="role-desc">F-22, F-15C — dedicated air-air combat</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>F14</code></td><td>F-14 Tomcat (retired)</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>F15</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>F-15 Eagle / Strike Eagle</td><td class="other-roles">multirole_fighter</td></tr>
+<tr><td><code>F22</code></td><td>F-22 Raptor</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-multirole_fighter">
+<h4>Multirole fighter <code>multirole_fighter</code></h4>
+<p class="role-desc">F-35, F-16, F/A-18, F-15E — air-to-air + air-to-ground</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>F15</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>F-15 Eagle / Strike Eagle</td><td class="other-roles">fighter_air_superiority</td></tr>
+<tr><td><code>F16</code></td><td>F-16 Fighting Falcon</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>F18</code></td><td>F/A-18 Hornet / Super Hornet</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>F18H</code></td><td>F/A-18A-D Hornet</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>F18S</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>F/A-18E/F Super Hornet / EA-18G</td><td class="other-roles">sigint_elint</td></tr>
+<tr><td><code>F35</code></td><td>F-35 Lightning II</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>F4</code></td><td>F-4 Phantom II (retired)</td><td class="other-roles">strategic_recon</td></tr>
+<tr><td><code>F5</code></td><td>F-5 Tiger II</td><td class="other-roles">strategic_recon</td></tr>
+<tr><td><code>HAR</code></td><td>AV-8 Harrier family</td><td class="other-roles">close_air_support</td></tr>
+<tr><td><code>MRF1</code></td><td>Dassault Mirage F1</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-close_air_support">
+<h4>Close air support <code>close_air_support</code></h4>
+<p class="role-desc">A-10 dedicated CAS</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>A10</code></td><td>A-10 Thunderbolt II</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>AT8T</code></td><td>Air Tractor AT-802 / OA-1K Skyraider II</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>HAR</code></td><td>AV-8 Harrier family</td><td class="other-roles">multirole_fighter</td></tr>
+<tr><td><code>TEX2</code></td><td>T-6 Texan II / AT-6 Wolverine</td><td class="other-roles">trainer_primary</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-bomber">
+<h4>Strategic bomber <code>bomber</code></h4>
+<p class="role-desc">B-1B, B-2A, B-52H — long-range strike</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>B1</code></td><td>B-1B Lancer</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B2</code></td><td>B-2 Spirit</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B21</code></td><td>B-21 Raider</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B52</code></td><td>B-52 Stratofortress</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-gunship">
+<h4>Gunship <code>gunship</code></h4>
+<p class="role-desc">AC-130 ground-attack with side-firing weapons</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>C130</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130 (legacy H/E)</td><td class="other-roles">tactical_airlift, air_refuelling, special_ops_lift, csar, sigint_elint, maritime_patrol, vip_executive</td></tr>
+<tr><td><code>C30J</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130J family</td><td class="other-roles">tactical_airlift, air_refuelling, special_ops_lift, csar, sigint_elint, maritime_patrol</td></tr>
+</tbody></table>
+</div>
+</section>
+<section class="role-group" id="group-isr">
+<h3>ISR <span class="group-flag">(on by default)</span></h3>
+<div class="role" id="role-maritime_patrol">
+<h4>Maritime patrol / ASW <code>maritime_patrol</code></h4>
+<p class="role-desc">P-8 Poseidon, P-3 Orion (MPA / anti-submarine)</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>B350</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Beech King Air 350 / MC-12W</td><td class="other-roles">utility_light, sigint_elint</td></tr>
+<tr><td><code>BE20</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Beech King Air 200 / C-12 / RC-12</td><td class="other-roles">utility_light, sigint_elint</td></tr>
+<tr><td><code>C130</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130 (legacy H/E)</td><td class="other-roles">tactical_airlift, air_refuelling, special_ops_lift, gunship, csar, sigint_elint, vip_executive</td></tr>
+<tr><td><code>C27J</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>C-27J Spartan</td><td class="other-roles">tactical_airlift, csar, special_ops_lift</td></tr>
+<tr><td><code>C30J</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130J family</td><td class="other-roles">tactical_airlift, air_refuelling, special_ops_lift, gunship, csar, sigint_elint</td></tr>
+<tr><td><code>CN35</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>CASA CN-235 / HC-144</td><td class="other-roles">tactical_airlift, csar</td></tr>
+<tr><td><code>DH8B</code></td><td>DHC-8-200 / P-9A</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>DH8C</code></td><td>DHC-8-300 (incl. maritime surveillance)</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>P3</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>P-3 Orion</td><td class="other-roles">sigint_elint, utility_light</td></tr>
+<tr><td><code>P8</code></td><td>P-8A Poseidon</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-awacs">
+<h4>AWACS / AEW&amp;C <code>awacs</code></h4>
+<p class="role-desc">E-3 Sentry, E-7 Wedgetail (airborne surveillance / battle mgmt)</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>B703</code></td><td>Boeing 707 family</td><td class="other-roles">command_relay, sigint_elint, civil_cargo</td></tr>
+<tr><td><code>E2</code></td><td>E-2 Hawkeye</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>E3CF</code></td><td>E-3 Sentry</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>E3TF</code></td><td>E-3 Sentry</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>E737</code></td><td>E-737 (AEW&amp;C)</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-sigint_elint">
+<h4>SIGINT / ELINT / EW <code>sigint_elint</code></h4>
+<p class="role-desc">RC-135, EA-37B Compass Call, RC-26, ISR Gulfstreams (collection + electronic attack)</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>B350</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Beech King Air 350 / MC-12W</td><td class="other-roles">utility_light, maritime_patrol</td></tr>
+<tr><td><code>B703</code></td><td>Boeing 707 family</td><td class="other-roles">awacs, command_relay, civil_cargo</td></tr>
+<tr><td><code>BE20</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Beech King Air 200 / C-12 / RC-12</td><td class="other-roles">utility_light, maritime_patrol</td></tr>
+<tr><td><code>BE50</code></td><td>Beech 50 Twin Bonanza / U-8/RU-8 Seminole</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>C130</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130 (legacy H/E)</td><td class="other-roles">tactical_airlift, air_refuelling, special_ops_lift, gunship, csar, maritime_patrol, vip_executive</td></tr>
+<tr><td><code>C30J</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130J family</td><td class="other-roles">tactical_airlift, air_refuelling, special_ops_lift, gunship, csar, maritime_patrol</td></tr>
+<tr><td><code>F18S</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>F/A-18E/F Super Hornet / EA-18G</td><td class="other-roles">multirole_fighter</td></tr>
+<tr><td><code>GLF5</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Gulfstream G550 / C-37B / EA-37B</td><td class="other-roles">vip_executive</td></tr>
+<tr><td><code>P3</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>P-3 Orion</td><td class="other-roles">maritime_patrol, utility_light</td></tr>
+<tr><td><code>PC12</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Pilatus PC-12 / U-28A Draco</td><td class="other-roles">utility_light, special_ops_lift</td></tr>
+<tr><td><code>R135</code></td><td>RC-135 (variant)</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>SW4</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Fairchild Metro / C-26 / RC-26</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>U2</code></td><td>U-2S Dragon Lady</td><td class="other-roles">strategic_recon</td></tr>
+<tr><td><code>U21</code></td><td>U-21/RU-21 Ute</td><td class="other-roles">utility_light</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-ground_surveillance">
+<h4>Ground/sea surveillance <code>ground_surveillance</code></h4>
+<p class="role-desc">E-8 J-STARS (retired 2023); E-9A Widget range surveillance</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>DH8A</code></td><td>DHC-8-100 / E-9A Widget</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>E8</code></td><td>E-8 J-STARS</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-command_relay">
+<h4>Command / comms relay <code>command_relay</code></h4>
+<p class="role-desc">E-6 Mercury TACAMO; E-11A BACN battlefield relay</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>B703</code></td><td>Boeing 707 family</td><td class="other-roles">awacs, sigint_elint, civil_cargo</td></tr>
+<tr><td><code>B742</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Boeing 747-200 / VC-25A / E-4B</td><td class="other-roles">civil_cargo, vip_executive</td></tr>
+<tr><td><code>E6</code></td><td>E-6 Mercury</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>GLEX</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Bombardier Global Express / E-11A</td><td class="other-roles">vip_executive</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-strategic_recon">
+<h4>Strategic recon <code>strategic_recon</code></h4>
+<p class="role-desc">U-2S Dragon Lady high-altitude reconnaissance</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>F4</code></td><td>F-4 Phantom II (retired)</td><td class="other-roles">multirole_fighter</td></tr>
+<tr><td><code>F5</code></td><td>F-5 Tiger II</td><td class="other-roles">multirole_fighter</td></tr>
+<tr><td><code>TR1</code></td><td>TR-1 (U-2 variant)</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>U2</code></td><td>U-2S Dragon Lady</td><td class="other-roles">sigint_elint</td></tr>
+<tr><td><code>W135</code></td><td>WC-135 Constant Phoenix (nuclear sampling)</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-uav_isr">
+<h4>UAV ISR <code>uav_isr</code></h4>
+<p class="role-desc">MQ-9 Reaper, RQ-4 Global Hawk, MQ-4 Triton (unmanned reconnaissance)</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>DRON</code></td><td>Drone (generic)</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>Q1</code></td><td>MQ-1 Predator</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>Q4</code></td><td>RQ-4 Global Hawk</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>Q9</code></td><td>MQ-9 Reaper</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+</section>
+<section class="role-group" id="group-other_roles">
+<h3>Other roles <span class="group-flag">(off by default)</span></h3>
+<div class="role" id="role-trainer_primary">
+<h4>Primary trainer <code>trainer_primary</code></h4>
+<p class="role-desc">T-6 Texan II and light pistons used for screening/training</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>C150</code></td><td>Cessna 150</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C172</code></td><td>Cessna 172</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>DA40</code></td><td>Diamond DA40</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>DG1T</code></td><td>DG-1000T motorglider</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>DISC</code></td><td>Schempp-Hirth Discus</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>DUOD</code></td><td>Schempp-Hirth Duo Discus</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>GLID</code></td><td>Glider (generic)</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>P28A</code></td><td>Piper PA-28 Cherokee</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>P28R</code></td><td>Piper PA-28R Arrow</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>RV12</code></td><td>Van&#x27;s RV-12</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>SR20</code></td><td>Cirrus SR20</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>T34T</code></td><td>T-34 Turbo Mentor</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>T6</code></td><td>T-6 Texan/Harvard (warbird; Texan II = TEX2)</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>TEX2</code></td><td>T-6 Texan II / AT-6 Wolverine</td><td class="other-roles">close_air_support</td></tr>
+<tr><td><code>TUCA</code></td><td>EMB-312 Tucano</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-trainer_advanced">
+<h4>Advanced trainer <code>trainer_advanced</code></h4>
+<p class="role-desc">T-38 Talon, T-45, T-1 Jayhawk (retired 2025), BAE Hawk</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>BE40</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Beech 400 / T-1 Jayhawk</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>BE55</code></td><td>Beech Baron 55 / T-42 Cochise</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>BE9L</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Beech King Air 90 / T-44 Pegasus</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>BT7</code></td><td>T-7A Red Hawk</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>HAWK</code></td><td>BAE Hawk / T-45 Goshawk</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>T1</code></td><td>T-1A Jayhawk (registry shorthand; ICAO T1 = Fuji T-1)</td><td class="other-roles">utility_light</td></tr>
+<tr><td><code>T38</code></td><td>T-38 Talon</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-vip_executive">
+<h4>VIP / executive <code>vip_executive</code></h4>
+<p class="role-desc">VC-25, C-32, C-37, C-40 — government / state lift</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>A330</code></td><td>Airbus A330</td><td class="other-roles">air_refuelling, civil_cargo</td></tr>
+<tr><td><code>ASTR</code></td><td>IAI Astra / Gulfstream G100</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B732</code></td><td>Boeing 737-200</td><td class="other-roles">civil_cargo</td></tr>
+<tr><td><code>B737</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Boeing 737-700 / C-40 Clipper</td><td class="other-roles">civil_cargo</td></tr>
+<tr><td><code>B742</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Boeing 747-200 / VC-25A / E-4B</td><td class="other-roles">civil_cargo, command_relay</td></tr>
+<tr><td><code>B748</code></td><td>Boeing 747-8 / VC-25B</td><td class="other-roles">civil_cargo</td></tr>
+<tr><td><code>B752</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Boeing 757-200</td><td class="other-roles">civil_cargo</td></tr>
+<tr><td><code>C130</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Lockheed C-130 (legacy H/E)</td><td class="other-roles">tactical_airlift, air_refuelling, special_ops_lift, gunship, csar, sigint_elint, maritime_patrol</td></tr>
+<tr><td><code>CL30</code></td><td>Bombardier Challenger 300</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>CL60</code></td><td>Bombardier Challenger 600 series</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>DC93</code></td><td>Douglas DC-9-30 / VC-9</td><td class="other-roles">civil_cargo</td></tr>
+<tr><td><code>FA10</code></td><td>Dassault Falcon 10</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>FA20</code></td><td>Dassault Falcon 20 / HU-25 Guardian</td><td class="other-roles">csar</td></tr>
+<tr><td><code>FA50</code></td><td>Dassault Falcon 50</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>FA7X</code></td><td>Dassault Falcon 7X</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>G150</code></td><td>Gulfstream G150</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>G200</code></td><td>Gulfstream G200</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>G280</code></td><td>Gulfstream G280</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>GA7C</code></td><td>Gulfstream G700</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>GLEX</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Bombardier Global Express / E-11A</td><td class="other-roles">command_relay</td></tr>
+<tr><td><code>GLF3</code></td><td>Gulfstream III</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>GLF4</code></td><td>Gulfstream G450/G400</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>GLF5</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Gulfstream G550 / C-37B / EA-37B</td><td class="other-roles">sigint_elint</td></tr>
+<tr><td><code>GLF6</code></td><td>Gulfstream G650</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>LJ60</code></td><td>Learjet 60</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-utility_light">
+<h4>Light utility <code>utility_light</code></h4>
+<p class="role-desc">Beech King Air variants (BE20, C-12), small twin turboprops</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>AT8T</code></td><td>Air Tractor AT-802 / OA-1K Skyraider II</td><td class="other-roles">close_air_support</td></tr>
+<tr><td><code>B190</code></td><td>Beech 1900</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B350</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Beech King Air 350 / MC-12W</td><td class="other-roles">sigint_elint, maritime_patrol</td></tr>
+<tr><td><code>BE10</code></td><td>Beech King Air 100</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>BE20</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Beech King Air 200 / C-12 / RC-12</td><td class="other-roles">sigint_elint, maritime_patrol</td></tr>
+<tr><td><code>BE30</code></td><td>Beech King Air 300</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>BE40</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Beech 400 / T-1 Jayhawk</td><td class="other-roles">trainer_advanced</td></tr>
+<tr><td><code>BE50</code></td><td>Beech 50 Twin Bonanza / U-8/RU-8 Seminole</td><td class="other-roles">sigint_elint</td></tr>
+<tr><td><code>BE55</code></td><td>Beech Baron 55 / T-42 Cochise</td><td class="other-roles">trainer_advanced</td></tr>
+<tr><td><code>BE9L</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Beech King Air 90 / T-44 Pegasus</td><td class="other-roles">trainer_advanced</td></tr>
+<tr><td><code>C135</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>C-135 Stratolifter</td><td class="other-roles">air_refuelling</td></tr>
+<tr><td><code>C182</code></td><td>Cessna 182</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C208</code></td><td>Cessna 208 Caravan</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C25A</code></td><td>Cessna Citation CJ2</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C25B</code></td><td>Cessna Citation CJ3</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C25C</code></td><td>Cessna Citation CJ4</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C560</code></td><td>Cessna Citation V/Ultra</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>C56X</code></td><td>Cessna Citation XLS</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>D328</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Dornier 328 / C-146A Wolfhound</td><td class="other-roles">special_ops_lift</td></tr>
+<tr><td><code>DH8A</code></td><td>DHC-8-100 / E-9A Widget</td><td class="other-roles">ground_surveillance</td></tr>
+<tr><td><code>DH8B</code></td><td>DHC-8-200 / P-9A</td><td class="other-roles">maritime_patrol</td></tr>
+<tr><td><code>DH8C</code></td><td>DHC-8-300 (incl. maritime surveillance)</td><td class="other-roles">maritime_patrol</td></tr>
+<tr><td><code>DHC2</code></td><td>DHC-2 Beaver</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>DHC6</code></td><td>DHC-6 Twin Otter</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>E135</code></td><td>Embraer ERJ 135</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>E145</code></td><td>Embraer ERJ 145</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>LJ35</code></td><td>Learjet 35 (C-21)</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>M28</code></td><td>PZL M28 / C-145A Skytruck</td><td class="other-roles">special_ops_lift</td></tr>
+<tr><td><code>P180</code></td><td>Piaggio P180 Avanti</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>P3</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>P-3 Orion</td><td class="other-roles">maritime_patrol, sigint_elint</td></tr>
+<tr><td><code>PA31</code></td><td>Piper PA-31 Navajo</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>PC12</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Pilatus PC-12 / U-28A Draco</td><td class="other-roles">special_ops_lift, sigint_elint</td></tr>
+<tr><td><code>SW4</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Fairchild Metro / C-26 / RC-26</td><td class="other-roles">sigint_elint</td></tr>
+<tr><td><code>T1</code></td><td>T-1A Jayhawk (registry shorthand; ICAO T1 = Fuji T-1)</td><td class="other-roles">trainer_advanced</td></tr>
+<tr><td><code>T206</code></td><td>Cessna T206 Stationair</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>TBM7</code></td><td>Daher TBM 700</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>U21</code></td><td>U-21/RU-21 Ute</td><td class="other-roles">sigint_elint</td></tr>
+</tbody></table>
+</div>
+<div class="role" id="role-civil_cargo">
+<h4>Civil transport (CRAF) <code>civil_cargo</code></h4>
+<p class="role-desc">Civil Reserve Air Fleet airliners &amp; freighters (747F/777F/MD-11F, passenger 737/757/767)</p>
+<table class="designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Also mapped to</th></tr></thead><tbody>
+<tr><td><code>A330</code></td><td>Airbus A330</td><td class="other-roles">air_refuelling, vip_executive</td></tr>
+<tr><td><code>A332</code></td><td>Airbus A330-200</td><td class="other-roles">air_refuelling</td></tr>
+<tr><td><code>A333</code></td><td>Airbus A330-300</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B703</code></td><td>Boeing 707 family</td><td class="other-roles">awacs, command_relay, sigint_elint</td></tr>
+<tr><td><code>B712</code></td><td>Boeing 717-200</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B732</code></td><td>Boeing 737-200</td><td class="other-roles">vip_executive</td></tr>
+<tr><td><code>B736</code></td><td>Boeing 737-600</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B737</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Boeing 737-700 / C-40 Clipper</td><td class="other-roles">vip_executive</td></tr>
+<tr><td><code>B738</code></td><td>Boeing 737-800</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B741</code></td><td>Boeing 747-100</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B742</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Boeing 747-200 / VC-25A / E-4B</td><td class="other-roles">vip_executive, command_relay</td></tr>
+<tr><td><code>B744</code></td><td>Boeing 747-400F</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B748</code></td><td>Boeing 747-8 / VC-25B</td><td class="other-roles">vip_executive</td></tr>
+<tr><td><code>B752</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Boeing 757-200</td><td class="other-roles">vip_executive</td></tr>
+<tr><td><code>B753</code></td><td>Boeing 757-300</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B762</code> <span class="has-variants" title="Narrowed further by description">variant rules</span></td><td>Boeing 767-200</td><td class="other-roles">air_refuelling</td></tr>
+<tr><td><code>B763</code></td><td>Boeing 767-300</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B764</code></td><td>Boeing 767-400</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B767</code></td><td>Boeing 767</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B772</code></td><td>Boeing 777-200</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B77L</code></td><td>Boeing 777-200LR</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>B77W</code></td><td>Boeing 777-300ER</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>BLCF</code></td><td>Boeing 747 Dreamlifter</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>DC93</code></td><td>Douglas DC-9-30 / VC-9</td><td class="other-roles">vip_executive</td></tr>
+<tr><td><code>E190</code></td><td>Embraer E190</td><td class="other-roles">&mdash;</td></tr>
+<tr><td><code>MD11</code></td><td>McDonnell Douglas MD-11F</td><td class="other-roles">&mdash;</td></tr>
+</tbody></table>
+</div>
+</section>
+<section class="role-group" id="group-role_unknown">
+<h3>Role unknown <span class="group-flag">(on by default)</span></h3>
+<div class="role"><h4>typecode_unknown <span class="synthetic">synthetic bucket</span></h4><p class="role-desc">The aircraft broadcast no type code at all, so there was nothing to look up.</p></div>
+<div class="role"><h4>type_unknown <span class="synthetic">synthetic bucket</span></h4><p class="role-desc">A type code was broadcast but could not be resolved to a known aircraft type.</p></div>
+<div class="role"><h4>role_unknown <span class="synthetic">synthetic bucket</span></h4><p class="role-desc">The type resolved fine, but its designator carries no roles in the taxonomy — so the aircraft is known and its job is not.</p></div>
+</section>
+<h2 id="variants">Variant narrowing</h2>
+<p>Some type codes cover a family of aircraft doing quite different jobs &mdash; a C-130 airframe may be a tanker, a gunship or a search-and-rescue platform. Where the aircraft&rsquo;s description string identifies the variant, it narrows the roles to just those listed below, replacing the designator&rsquo;s full set.</p>
+<p class='order-note'><strong>Order matters.</strong> Patterns are matched as substrings against the upper-cased description and the <em>first</em> match wins, so these are listed in taxonomy order, not alphabetically. If no pattern matches, the designator&rsquo;s full role set applies.</p>
+<table class="variants">
+<thead><tr><th>Type code</th><th>If description contains</th><th>Roles become</th></tr></thead><tbody>
+<tr><td><code>B350</code></td><td><code>MC-12</code></td><td>sigint_elint</td></tr>
+<tr><td></td><td><code>UC-12</code></td><td>utility_light</td></tr>
+<tr><td><code>B737</code></td><td><code>C-40</code></td><td>vip_executive</td></tr>
+<tr><td></td><td><code>737</code></td><td>civil_cargo</td></tr>
+<tr><td><code>B742</code></td><td><code>E-4B</code></td><td>command_relay</td></tr>
+<tr><td></td><td><code>VC-25</code></td><td>vip_executive</td></tr>
+<tr><td></td><td><code>747</code></td><td>civil_cargo</td></tr>
+<tr><td><code>B752</code></td><td><code>C-32</code></td><td>vip_executive</td></tr>
+<tr><td></td><td><code>757</code></td><td>civil_cargo</td></tr>
+<tr><td><code>B762</code></td><td><code>KC-46</code></td><td>air_refuelling</td></tr>
+<tr><td></td><td><code>767</code></td><td>civil_cargo</td></tr>
+<tr><td><code>BE20</code></td><td><code>RC-12</code></td><td>sigint_elint</td></tr>
+<tr><td></td><td><code>UC-12</code></td><td>utility_light</td></tr>
+<tr><td></td><td><code>C-12</code></td><td>utility_light</td></tr>
+<tr><td></td><td><code>KING AIR</code></td><td>utility_light</td></tr>
+<tr><td><code>BE40</code></td><td><code>T-1</code></td><td>trainer_advanced</td></tr>
+<tr><td><code>BE9L</code></td><td><code>T-44</code></td><td>trainer_advanced</td></tr>
+<tr><td></td><td><code>KING AIR</code></td><td>utility_light</td></tr>
+<tr><td><code>C130</code></td><td><code>KC-130</code></td><td>air_refuelling</td></tr>
+<tr><td></td><td><code>LC-130</code></td><td>tactical_airlift</td></tr>
+<tr><td></td><td><code>C-130</code></td><td>tactical_airlift</td></tr>
+<tr><td><code>C135</code></td><td><code>TC-135</code></td><td>utility_light</td></tr>
+<tr><td></td><td><code>NC-135</code></td><td>utility_light</td></tr>
+<tr><td><code>C27J</code></td><td><code>HC-27</code></td><td>csar</td></tr>
+<tr><td></td><td><code>C-27</code></td><td>tactical_airlift</td></tr>
+<tr><td><code>C30J</code></td><td><code>KC-130</code></td><td>air_refuelling</td></tr>
+<tr><td></td><td><code>MC-130</code></td><td>special_ops_lift</td></tr>
+<tr><td></td><td><code>HC-130</code></td><td>csar</td></tr>
+<tr><td></td><td><code>AC-130</code></td><td>gunship</td></tr>
+<tr><td></td><td><code>EC-130</code></td><td>sigint_elint</td></tr>
+<tr><td></td><td><code>WC-130</code></td><td>tactical_airlift</td></tr>
+<tr><td></td><td><code>C-130</code></td><td>tactical_airlift</td></tr>
+<tr><td><code>CN35</code></td><td><code>HC-144</code></td><td>maritime_patrol</td></tr>
+<tr><td></td><td><code>CN-235</code></td><td>tactical_airlift</td></tr>
+<tr><td><code>D328</code></td><td><code>C-146</code></td><td>special_ops_lift</td></tr>
+<tr><td><code>F15</code></td><td><code>F-15E</code></td><td>multirole_fighter</td></tr>
+<tr><td></td><td><code>STRIKE EAGLE</code></td><td>multirole_fighter</td></tr>
+<tr><td></td><td><code>F-15</code></td><td>fighter_air_superiority</td></tr>
+<tr><td><code>F18S</code></td><td><code>EA-18</code></td><td>sigint_elint</td></tr>
+<tr><td></td><td><code>F/A-18</code></td><td>multirole_fighter</td></tr>
+<tr><td></td><td><code>FA-18</code></td><td>multirole_fighter</td></tr>
+<tr><td><code>GLEX</code></td><td><code>E-11</code></td><td>command_relay</td></tr>
+<tr><td><code>GLF5</code></td><td><code>EA-37</code></td><td>sigint_elint</td></tr>
+<tr><td></td><td><code>C-37</code></td><td>vip_executive</td></tr>
+<tr><td><code>H47</code></td><td><code>MH-47</code></td><td>special_ops_lift</td></tr>
+<tr><td></td><td><code>CH-47</code></td><td>rotary_lift</td></tr>
+<tr><td><code>H500</code></td><td><code>MH-6</code></td><td>special_ops_lift</td></tr>
+<tr><td></td><td><code>AH-6</code></td><td>rotary_attack</td></tr>
+<tr><td></td><td><code>OH-6</code></td><td>rotary_attack</td></tr>
+<tr><td><code>H53S</code></td><td><code>MH-53</code></td><td>special_ops_lift</td></tr>
+<tr><td></td><td><code>CH-53</code></td><td>rotary_lift</td></tr>
+<tr><td><code>H60</code></td><td><code>HH-60</code></td><td>csar</td></tr>
+<tr><td></td><td><code>MH-60</code></td><td>special_ops_lift</td></tr>
+<tr><td></td><td><code>UH-60</code></td><td>rotary_lift</td></tr>
+<tr><td><code>P3</code></td><td><code>NP-3</code></td><td>utility_light</td></tr>
+<tr><td></td><td><code>WP-3</code></td><td>utility_light</td></tr>
+<tr><td></td><td><code>P-3</code></td><td>maritime_patrol</td></tr>
+<tr><td></td><td><code>P3</code></td><td>maritime_patrol</td></tr>
+<tr><td><code>PC12</code></td><td><code>U-28</code></td><td>special_ops_lift</td></tr>
+<tr><td></td><td><code>PC-12</code></td><td>utility_light</td></tr>
+<tr><td><code>SW4</code></td><td><code>RC-26</code></td><td>sigint_elint</td></tr>
+<tr><td></td><td><code>C-26</code></td><td>utility_light</td></tr>
+<tr><td><code>UH1</code></td><td><code>HH-1</code></td><td>csar</td></tr>
+<tr><td></td><td><code>TH-1</code></td><td>rotary_lift</td></tr>
+<tr><td></td><td><code>UH-1</code></td><td>rotary_lift</td></tr>
+</tbody></table>
+<h2 id="index">Every type code</h2>
+<table class="all-designators">
+<thead><tr><th>Type code</th><th>Aircraft</th><th>Roles</th><th>Groups</th></tr></thead><tbody>
+<tr><td><code>A10</code></td><td>A-10 Thunderbolt II</td><td>close_air_support</td><td>combat</td></tr>
+<tr><td><code>A109</code></td><td>AgustaWestland AW109</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>A119</code></td><td>AgustaWestland AW119</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>A139</code></td><td>AgustaWestland AW139</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>A189</code></td><td>AgustaWestland AW189</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>A330</code></td><td>Airbus A330</td><td>air_refuelling, civil_cargo, vip_executive</td><td>other_roles, refuelling</td></tr>
+<tr><td><code>A332</code></td><td>Airbus A330-200</td><td>air_refuelling, civil_cargo</td><td>other_roles, refuelling</td></tr>
+<tr><td><code>A333</code></td><td>Airbus A330-300</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>AS32</code></td><td>Airbus AS332 Super Puma</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>AS35</code></td><td>Airbus AS350</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>AS50</code></td><td>Airbus AS350</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>AS55</code></td><td>Airbus AS555</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>AS65</code></td><td>Airbus AS565 Panther</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>ASTR</code></td><td>IAI Astra / Gulfstream G100</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>AT8T</code></td><td>Air Tractor AT-802 / OA-1K Skyraider II</td><td>utility_light, close_air_support</td><td>combat, other_roles</td></tr>
+<tr><td><code>B06</code></td><td>Bell 206 JetRanger</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>B06T</code></td><td>Bell 206L LongRanger</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>B1</code></td><td>B-1B Lancer</td><td>bomber</td><td>combat</td></tr>
+<tr><td><code>B190</code></td><td>Beech 1900</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>B2</code></td><td>B-2 Spirit</td><td>bomber</td><td>combat</td></tr>
+<tr><td><code>B21</code></td><td>B-21 Raider</td><td>bomber</td><td>combat</td></tr>
+<tr><td><code>B212</code></td><td>Bell 212</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>B350</code></td><td>Beech King Air 350 / MC-12W</td><td>utility_light, sigint_elint, maritime_patrol</td><td>isr, other_roles</td></tr>
+<tr><td><code>B412</code></td><td>Bell 412</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>B429</code></td><td>Bell 429</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>B505</code></td><td>Bell 505 Jet Ranger X</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>B52</code></td><td>B-52 Stratofortress</td><td>bomber</td><td>combat</td></tr>
+<tr><td><code>B703</code></td><td>Boeing 707 family</td><td>awacs, command_relay, sigint_elint, civil_cargo</td><td>isr, other_roles</td></tr>
+<tr><td><code>B712</code></td><td>Boeing 717-200</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>B732</code></td><td>Boeing 737-200</td><td>civil_cargo, vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>B736</code></td><td>Boeing 737-600</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>B737</code></td><td>Boeing 737-700 / C-40 Clipper</td><td>vip_executive, civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>B738</code></td><td>Boeing 737-800</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>B741</code></td><td>Boeing 747-100</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>B742</code></td><td>Boeing 747-200 / VC-25A / E-4B</td><td>civil_cargo, vip_executive, command_relay</td><td>isr, other_roles</td></tr>
+<tr><td><code>B744</code></td><td>Boeing 747-400F</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>B748</code></td><td>Boeing 747-8 / VC-25B</td><td>civil_cargo, vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>B752</code></td><td>Boeing 757-200</td><td>civil_cargo, vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>B753</code></td><td>Boeing 757-300</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>B762</code></td><td>Boeing 767-200</td><td>air_refuelling, civil_cargo</td><td>other_roles, refuelling</td></tr>
+<tr><td><code>B763</code></td><td>Boeing 767-300</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>B764</code></td><td>Boeing 767-400</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>B767</code></td><td>Boeing 767</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>B772</code></td><td>Boeing 777-200</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>B77L</code></td><td>Boeing 777-200LR</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>B77W</code></td><td>Boeing 777-300ER</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>BALL</code></td><td>Balloon</td><td>non_aircraft</td><td>?</td></tr>
+<tr><td><code>BE10</code></td><td>Beech King Air 100</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>BE20</code></td><td>Beech King Air 200 / C-12 / RC-12</td><td>utility_light, sigint_elint, maritime_patrol</td><td>isr, other_roles</td></tr>
+<tr><td><code>BE30</code></td><td>Beech King Air 300</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>BE40</code></td><td>Beech 400 / T-1 Jayhawk</td><td>utility_light, trainer_advanced</td><td>other_roles</td></tr>
+<tr><td><code>BE50</code></td><td>Beech 50 Twin Bonanza / U-8/RU-8 Seminole</td><td>utility_light, sigint_elint</td><td>isr, other_roles</td></tr>
+<tr><td><code>BE55</code></td><td>Beech Baron 55 / T-42 Cochise</td><td>utility_light, trainer_advanced</td><td>other_roles</td></tr>
+<tr><td><code>BE9L</code></td><td>Beech King Air 90 / T-44 Pegasus</td><td>utility_light, trainer_advanced</td><td>other_roles</td></tr>
+<tr><td><code>BLCF</code></td><td>Boeing 747 Dreamlifter</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>BT7</code></td><td>T-7A Red Hawk</td><td>trainer_advanced</td><td>other_roles</td></tr>
+<tr><td><code>C130</code></td><td>Lockheed C-130 (legacy H/E)</td><td>tactical_airlift, air_refuelling, special_ops_lift, gunship, csar, sigint_elint, maritime_patrol, vip_executive</td><td>airlift, combat, isr, other_roles, refuelling</td></tr>
+<tr><td><code>C135</code></td><td>C-135 Stratolifter</td><td>air_refuelling, utility_light</td><td>other_roles, refuelling</td></tr>
+<tr><td><code>C150</code></td><td>Cessna 150</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>C160</code></td><td>Transall C-160</td><td>tactical_airlift</td><td>airlift</td></tr>
+<tr><td><code>C17</code></td><td>C-17 Globemaster III</td><td>strategic_airlift</td><td>airlift</td></tr>
+<tr><td><code>C172</code></td><td>Cessna 172</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>C182</code></td><td>Cessna 182</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>C2</code></td><td>C-2A Greyhound</td><td>tactical_airlift</td><td>airlift</td></tr>
+<tr><td><code>C208</code></td><td>Cessna 208 Caravan</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>C212</code></td><td>CASA C-212 Aviocar</td><td>tactical_airlift</td><td>airlift</td></tr>
+<tr><td><code>C25A</code></td><td>Cessna Citation CJ2</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>C25B</code></td><td>Cessna Citation CJ3</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>C25C</code></td><td>Cessna Citation CJ4</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>C27J</code></td><td>C-27J Spartan</td><td>tactical_airlift, csar, special_ops_lift, maritime_patrol</td><td>airlift, isr</td></tr>
+<tr><td><code>C295</code></td><td>C-295</td><td>tactical_airlift</td><td>airlift</td></tr>
+<tr><td><code>C30J</code></td><td>Lockheed C-130J family</td><td>tactical_airlift, air_refuelling, special_ops_lift, gunship, csar, sigint_elint, maritime_patrol</td><td>airlift, combat, isr, refuelling</td></tr>
+<tr><td><code>C5</code></td><td>C-5 Galaxy</td><td>strategic_airlift</td><td>airlift</td></tr>
+<tr><td><code>C560</code></td><td>Cessna Citation V/Ultra</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>C56X</code></td><td>Cessna Citation XLS</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>C5M</code></td><td>C-5M Super Galaxy</td><td>strategic_airlift</td><td>airlift</td></tr>
+<tr><td><code>CL30</code></td><td>Bombardier Challenger 300</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>CL60</code></td><td>Bombardier Challenger 600 series</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>CN35</code></td><td>CASA CN-235 / HC-144</td><td>tactical_airlift, csar, maritime_patrol</td><td>airlift, isr</td></tr>
+<tr><td><code>D328</code></td><td>Dornier 328 / C-146A Wolfhound</td><td>utility_light, special_ops_lift</td><td>airlift, other_roles</td></tr>
+<tr><td><code>DA40</code></td><td>Diamond DA40</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>DC93</code></td><td>Douglas DC-9-30 / VC-9</td><td>civil_cargo, vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>DG1T</code></td><td>DG-1000T motorglider</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>DH8A</code></td><td>DHC-8-100 / E-9A Widget</td><td>utility_light, ground_surveillance</td><td>isr, other_roles</td></tr>
+<tr><td><code>DH8B</code></td><td>DHC-8-200 / P-9A</td><td>utility_light, maritime_patrol</td><td>isr, other_roles</td></tr>
+<tr><td><code>DH8C</code></td><td>DHC-8-300 (incl. maritime surveillance)</td><td>utility_light, maritime_patrol</td><td>isr, other_roles</td></tr>
+<tr><td><code>DHC2</code></td><td>DHC-2 Beaver</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>DHC6</code></td><td>DHC-6 Twin Otter</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>DISC</code></td><td>Schempp-Hirth Discus</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>DRON</code></td><td>Drone (generic)</td><td>uav_isr</td><td>isr</td></tr>
+<tr><td><code>DUOD</code></td><td>Schempp-Hirth Duo Discus</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>E135</code></td><td>Embraer ERJ 135</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>E145</code></td><td>Embraer ERJ 145</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>E190</code></td><td>Embraer E190</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>E2</code></td><td>E-2 Hawkeye</td><td>awacs</td><td>isr</td></tr>
+<tr><td><code>E3CF</code></td><td>E-3 Sentry</td><td>awacs</td><td>isr</td></tr>
+<tr><td><code>E3TF</code></td><td>E-3 Sentry</td><td>awacs</td><td>isr</td></tr>
+<tr><td><code>E6</code></td><td>E-6 Mercury</td><td>command_relay</td><td>isr</td></tr>
+<tr><td><code>E737</code></td><td>E-737 (AEW&amp;C)</td><td>awacs</td><td>isr</td></tr>
+<tr><td><code>E8</code></td><td>E-8 J-STARS</td><td>ground_surveillance</td><td>isr</td></tr>
+<tr><td><code>EC25</code></td><td>EC-225 Super Puma / EC-725 Caracal</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>EC30</code></td><td>Eurocopter EC130</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>EC35</code></td><td>Eurocopter EC135</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>EC45</code></td><td>Eurocopter EC145</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>EC55</code></td><td>Eurocopter EC155</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>EC75</code></td><td>Airbus H175 (EC-175)</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>F14</code></td><td>F-14 Tomcat (retired)</td><td>fighter_air_superiority</td><td>combat</td></tr>
+<tr><td><code>F15</code></td><td>F-15 Eagle / Strike Eagle</td><td>fighter_air_superiority, multirole_fighter</td><td>combat</td></tr>
+<tr><td><code>F16</code></td><td>F-16 Fighting Falcon</td><td>multirole_fighter</td><td>combat</td></tr>
+<tr><td><code>F18</code></td><td>F/A-18 Hornet / Super Hornet</td><td>multirole_fighter</td><td>combat</td></tr>
+<tr><td><code>F18H</code></td><td>F/A-18A-D Hornet</td><td>multirole_fighter</td><td>combat</td></tr>
+<tr><td><code>F18S</code></td><td>F/A-18E/F Super Hornet / EA-18G</td><td>multirole_fighter, sigint_elint</td><td>combat, isr</td></tr>
+<tr><td><code>F22</code></td><td>F-22 Raptor</td><td>fighter_air_superiority</td><td>combat</td></tr>
+<tr><td><code>F35</code></td><td>F-35 Lightning II</td><td>multirole_fighter</td><td>combat</td></tr>
+<tr><td><code>F4</code></td><td>F-4 Phantom II (retired)</td><td>multirole_fighter, strategic_recon</td><td>combat, isr</td></tr>
+<tr><td><code>F5</code></td><td>F-5 Tiger II</td><td>multirole_fighter, strategic_recon</td><td>combat, isr</td></tr>
+<tr><td><code>FA10</code></td><td>Dassault Falcon 10</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>FA20</code></td><td>Dassault Falcon 20 / HU-25 Guardian</td><td>vip_executive, csar</td><td>airlift, other_roles</td></tr>
+<tr><td><code>FA50</code></td><td>Dassault Falcon 50</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>FA7X</code></td><td>Dassault Falcon 7X</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>FFLO</code></td><td>Free-flight object</td><td>non_aircraft</td><td>?</td></tr>
+<tr><td><code>G150</code></td><td>Gulfstream G150</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>G200</code></td><td>Gulfstream G200</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>G280</code></td><td>Gulfstream G280</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>GA7C</code></td><td>Gulfstream G700</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>GLEX</code></td><td>Bombardier Global Express / E-11A</td><td>vip_executive, command_relay</td><td>isr, other_roles</td></tr>
+<tr><td><code>GLF3</code></td><td>Gulfstream III</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>GLF4</code></td><td>Gulfstream G450/G400</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>GLF5</code></td><td>Gulfstream G550 / C-37B / EA-37B</td><td>vip_executive, sigint_elint</td><td>isr, other_roles</td></tr>
+<tr><td><code>GLF6</code></td><td>Gulfstream G650</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>GLID</code></td><td>Glider (generic)</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>H47</code></td><td>CH-47/MH-47 Chinook</td><td>rotary_lift, special_ops_lift</td><td>?, airlift</td></tr>
+<tr><td><code>H500</code></td><td>MD500 / AH-6 / MH-6 Little Bird</td><td>rotary_attack, rotary_lift, special_ops_lift</td><td>?, airlift</td></tr>
+<tr><td><code>H53</code></td><td>Sikorsky H-53 Sea Stallion family</td><td>rotary_lift, special_ops_lift, csar</td><td>?, airlift</td></tr>
+<tr><td><code>H53S</code></td><td>CH-53/MH-53 Sea Stallion</td><td>rotary_lift, special_ops_lift</td><td>?, airlift</td></tr>
+<tr><td><code>H60</code></td><td>Sikorsky H-60 (UH/HH/MH/AH-60)</td><td>rotary_lift, rotary_attack, special_ops_lift, csar</td><td>?, airlift</td></tr>
+<tr><td><code>H64</code></td><td>AH-64 Apache</td><td>rotary_attack</td><td>?</td></tr>
+<tr><td><code>HAR</code></td><td>AV-8 Harrier family</td><td>close_air_support, multirole_fighter</td><td>combat</td></tr>
+<tr><td><code>HAWK</code></td><td>BAE Hawk / T-45 Goshawk</td><td>trainer_advanced</td><td>other_roles</td></tr>
+<tr><td><code>K35E</code></td><td>KC-135E</td><td>air_refuelling</td><td>refuelling</td></tr>
+<tr><td><code>K35R</code></td><td>KC-135R Stratotanker</td><td>air_refuelling</td><td>refuelling</td></tr>
+<tr><td><code>KC46</code></td><td>KC-46 Pegasus</td><td>air_refuelling</td><td>refuelling</td></tr>
+<tr><td><code>LJ35</code></td><td>Learjet 35 (C-21)</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>LJ60</code></td><td>Learjet 60</td><td>vip_executive</td><td>other_roles</td></tr>
+<tr><td><code>M28</code></td><td>PZL M28 / C-145A Skytruck</td><td>utility_light, special_ops_lift</td><td>airlift, other_roles</td></tr>
+<tr><td><code>MD11</code></td><td>McDonnell Douglas MD-11F</td><td>civil_cargo</td><td>other_roles</td></tr>
+<tr><td><code>MI8</code></td><td>Mil Mi-8</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>MRF1</code></td><td>Dassault Mirage F1</td><td>multirole_fighter</td><td>combat</td></tr>
+<tr><td><code>P180</code></td><td>Piaggio P180 Avanti</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>P28A</code></td><td>Piper PA-28 Cherokee</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>P28R</code></td><td>Piper PA-28R Arrow</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>P3</code></td><td>P-3 Orion</td><td>maritime_patrol, sigint_elint, utility_light</td><td>isr, other_roles</td></tr>
+<tr><td><code>P8</code></td><td>P-8A Poseidon</td><td>maritime_patrol</td><td>isr</td></tr>
+<tr><td><code>PA31</code></td><td>Piper PA-31 Navajo</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>PC12</code></td><td>Pilatus PC-12 / U-28A Draco</td><td>utility_light, special_ops_lift, sigint_elint</td><td>airlift, isr, other_roles</td></tr>
+<tr><td><code>Q1</code></td><td>MQ-1 Predator</td><td>uav_isr</td><td>isr</td></tr>
+<tr><td><code>Q4</code></td><td>RQ-4 Global Hawk</td><td>uav_isr</td><td>isr</td></tr>
+<tr><td><code>Q9</code></td><td>MQ-9 Reaper</td><td>uav_isr</td><td>isr</td></tr>
+<tr><td><code>R135</code></td><td>RC-135 (variant)</td><td>sigint_elint</td><td>isr</td></tr>
+<tr><td><code>R22</code></td><td>Robinson R22</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>R44</code></td><td>Robinson R44</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>R66</code></td><td>Robinson R66</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>RV12</code></td><td>Van&#x27;s RV-12</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>S61</code></td><td>Sikorsky S-61</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>S76</code></td><td>Sikorsky S-76</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>S92</code></td><td>Sikorsky S-92</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>SR20</code></td><td>Cirrus SR20</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>SUCO</code></td><td>AH-1W/AH-1Z SuperCobra</td><td>rotary_attack</td><td>?</td></tr>
+<tr><td><code>SW4</code></td><td>Fairchild Metro / C-26 / RC-26</td><td>utility_light, sigint_elint</td><td>isr, other_roles</td></tr>
+<tr><td><code>T1</code></td><td>T-1A Jayhawk (registry shorthand; ICAO T1 = Fuji T-1)</td><td>trainer_advanced, utility_light</td><td>other_roles</td></tr>
+<tr><td><code>T206</code></td><td>Cessna T206 Stationair</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>T34T</code></td><td>T-34 Turbo Mentor</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>T38</code></td><td>T-38 Talon</td><td>trainer_advanced</td><td>other_roles</td></tr>
+<tr><td><code>T6</code></td><td>T-6 Texan/Harvard (warbird; Texan II = TEX2)</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>TBM7</code></td><td>Daher TBM 700</td><td>utility_light</td><td>other_roles</td></tr>
+<tr><td><code>TEX2</code></td><td>T-6 Texan II / AT-6 Wolverine</td><td>trainer_primary, close_air_support</td><td>combat, other_roles</td></tr>
+<tr><td><code>TR1</code></td><td>TR-1 (U-2 variant)</td><td>strategic_recon</td><td>isr</td></tr>
+<tr><td><code>TUCA</code></td><td>EMB-312 Tucano</td><td>trainer_primary</td><td>other_roles</td></tr>
+<tr><td><code>TWR</code></td><td>Ground station</td><td>non_aircraft</td><td>?</td></tr>
+<tr><td><code>U2</code></td><td>U-2S Dragon Lady</td><td>strategic_recon, sigint_elint</td><td>isr</td></tr>
+<tr><td><code>U21</code></td><td>U-21/RU-21 Ute</td><td>utility_light, sigint_elint</td><td>isr, other_roles</td></tr>
+<tr><td><code>UH1</code></td><td>UH-1 Iroquois</td><td>rotary_lift, csar</td><td>?, airlift</td></tr>
+<tr><td><code>UH1Y</code></td><td>UH-1Y Venom</td><td>rotary_lift</td><td>?</td></tr>
+<tr><td><code>V22</code></td><td>V-22 Osprey</td><td>tilt_rotor</td><td>?</td></tr>
+<tr><td><code>W135</code></td><td>WC-135 Constant Phoenix (nuclear sampling)</td><td>strategic_recon</td><td>isr</td></tr>
+</tbody></table>
+<p class="regen-note">This page is generated from <code>data/in/config/roles.json</code> by <code>backend/pipeline/gen/roles_page.py</code>. A change to the taxonomy that is not reflected here fails the test suite.</p>
+</main>
+</body>
+</html>
